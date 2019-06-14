@@ -1,0 +1,58 @@
+
+    版本号：version == 0.4.25
+
+    news_project 是通过解析不同app的列表页，获得列表页中所包含的详情页url，
+然后通过引入的第三方模块newspaper解析文本咨询详情页面，返回数据进行入库
+
+    环境需求:
+        python3+
+        pip newspaper3k     Article
+        pip requests
+        pip bloom_filter    BloomFilter
+        pip newsapi-python      NewsApiClient
+        pip bs4     BeautifulSoup
+        pip validators   validators.url(href)用来判断图片url是否正确
+        pip urllib    urllib.request/urllib.parse
+        pip re
+        pip lxml    etree
+        pip pymysql
+        pip hashlib
+        pip io      BytesIO
+        pip PIL     Image
+        pip pyOpenSSL
+
+
+    1.入库前检查需要修改内容:
+             main : 修改 downloadPath,picPath,修改 self.post_DB 选择入库位置(post/mysql)
+        newsfeeds : 修改 data字段，图片下载地址是否正确
+        saveSqldb : 修改 入库字段，入库ip/host...
+           spider : 检查各个app的headers/cookies失效及时更换,对googleNews进行数据来源选择
+
+    2.run
+        项目运行
+
+    3.main
+        app首次运行请求，携带cookies/headers信息,返回的详情页url进行bloom过滤，
+    将过滤后的详情页url给 newsfeeds进行解析，返回的data进行入库
+
+    4.NewsBreak/TopBuzz/BuzzFeed/GoogleNews/smartNews
+        不同app列表页解析，返回列表页所包含详情页url列表到 main:
+
+    5.newsfeeds
+        利用newspaper对详情页文本解析，并用io,PIL对图片进行尺寸的筛选，解析出的 data 返会给 main。
+
+    6.saveSqldb
+        数据入库，增加或删除入库字段。
+
+
+test:
+    import newspaper
+    import requests
+
+
+    cnn_paper = newspaper.build('https://www.buzzfeed.com')
+
+    # 获取详情页URL
+    for article in cnn_paper.articles:
+    print(article.url)
+
